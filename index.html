@@ -14674,7 +14674,7 @@ div.jp-OutputPrompt {
 <li>Best Time to Buy and Sell 1 transaction (121)</li>
 <li>Best Time to Buy and Sell unlimited transactions (122)</li>
 <li>Best Time to Buy and Sell 2 transactions (123)</li>
-<li>Best Time to Buy and Sell 2 transactions (188)</li>
+<li>Best Time to Buy and Sell k transactions (188)</li>
 </ol>
 
 </div>
@@ -15197,7 +15197,7 @@ maxs_p_sub_minsp| 0 0 3 3 3 3 3 8 8 11 11 11
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[21]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[6]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
      <div class="CodeMirror cm-s-jupyter">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="o">%%</span><span class="k">q</span>
@@ -15291,12 +15291,13 @@ maxs_p_sub_minsp| 0 0 3 3 3 3 3 8 8 11 11 11
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[26]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[8]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
      <div class="CodeMirror cm-s-jupyter">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="o">%%</span><span class="k">q</span>
 maxprofit:{[p] max p - mins p}
-flip `prefix`suffix!(_[1] scan p;reverse _[-1] scan p)
+t:flip `prefix`suffix!(_[1] scan p;reverse _[-1] scan p)
+update total_prof:prof_pre+prof_suf from update prof_pre:0|maxprofit each prefix, prof_suf:0|maxprofit each suffix from t 
 max (maxprofit each _[1] scan p)+maxprofit each reverse _[-1] scan p
 </pre></div>
 
@@ -15318,21 +15319,22 @@ max (maxprofit each _[1] scan p)+maxprofit each reverse _[-1] scan p
 
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain">
 <pre>::
-prefix                   suffix                  
--------------------------------------------------
-3 2 5 1 3 2 4 9 5 12 3 5 `long$()                
-2 5 1 3 2 4 9 5 12 3 5   ,3                      
-5 1 3 2 4 9 5 12 3 5     3 2                     
-1 3 2 4 9 5 12 3 5       3 2 5                   
-3 2 4 9 5 12 3 5         3 2 5 1                 
-2 4 9 5 12 3 5           3 2 5 1 3               
-4 9 5 12 3 5             3 2 5 1 3 2             
-9 5 12 3 5               3 2 5 1 3 2 4           
-5 12 3 5                 3 2 5 1 3 2 4 9         
-12 3 5                   3 2 5 1 3 2 4 9 5       
-3 5                      3 2 5 1 3 2 4 9 5 12    
-,5                       3 2 5 1 3 2 4 9 5 12 3  
-`long$()                 3 2 5 1 3 2 4 9 5 12 3 5
+::
+prefix                   suffix                   prof_pre prof_suf total_prof
+------------------------------------------------------------------------------
+3 2 5 1 3 2 4 9 5 12 3 5 `long$()                 11       0        11        
+2 5 1 3 2 4 9 5 12 3 5   ,3                       11       0        11        
+5 1 3 2 4 9 5 12 3 5     3 2                      11       0        11        
+1 3 2 4 9 5 12 3 5       3 2 5                    11       3        14        
+3 2 4 9 5 12 3 5         3 2 5 1                  10       3        13        
+2 4 9 5 12 3 5           3 2 5 1 3                10       3        13        
+4 9 5 12 3 5             3 2 5 1 3 2              8        3        11        
+9 5 12 3 5               3 2 5 1 3 2 4            7        3        10        
+5 12 3 5                 3 2 5 1 3 2 4 9          7        8        15        
+12 3 5                   3 2 5 1 3 2 4 9 5        2        8        10        
+3 5                      3 2 5 1 3 2 4 9 5 12     2        11       13        
+,5                       3 2 5 1 3 2 4 9 5 12 3   0        11       11        
+`long$()                 3 2 5 1 3 2 4 9 5 12 3 5 0        11       11        
 15
 </pre>
 </div>
@@ -15467,7 +15469,7 @@ prefix                   suffix
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[27]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[9]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
      <div class="CodeMirror cm-s-jupyter">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="o">%%</span><span class="k">q</span>
@@ -15532,7 +15534,12 @@ prefix                   suffix
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
 <ul>
 <li>Let’s setup the recursive solution:</li>
-<li>and assume we are at a particular (i)ndex in our price series, with k transactions left.</li>
+<li>and assume we are at a particular state<ul>
+<li>(i)ndex in our price series</li>
+<li>k transactions left</li>
+<li>h are we holding a security</li>
+</ul>
+</li>
 <li>Let’s start with the base cases:<ul>
 <li>If k equals 0<ul>
 <li>return 0</li>
@@ -15571,8 +15578,8 @@ prefix                   suffix
 <li>we are no longer holding a share</li>
 </ul>
 </li>
-<li>Otherwise we buy at this step,<ul>
-<li>subtract current price (we spend money to buy) + the result of<ul>
+<li>Otherwise we are not (h)olding a share buy at this step<ul>
+<li>subtract current price (we spend money to buy) + the result of:<ul>
 <li>this function with i incremented</li>
 </ul>
 </li>
@@ -15593,18 +15600,18 @@ prefix                   suffix
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[30]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[10]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
      <div class="CodeMirror cm-s-jupyter">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="o">%%</span><span class="k">q</span>
-show cache:(0b,&#39;0,&#39;til[count p])!count[p]#0
+cache:(0b,&#39;0,&#39;til[count p])!count[p]#0;
 f:{[h;k;i]
-   $[i=count p;0;
-     k=0;0;
-    (h;k;i) in key cache;cache[(h;k;i)];
-  donothing:.z.s[h;k;i+1];
-  dosomething:$[h;p[i]+.z.s[0b;k-1;i+1];.z.s[1b;k;i+1]-p i];
-  :cache[(h;k;i)]:donothing|dosomething]}
+  $[i=count p;0;
+   k=0;0; /this will never happen since it&#39;s prepopulated 
+   (h;k;i) in key cache;cache[(h;k;i)];
+   [donothing:.z.s[h;k;i+1];
+    dosomething:$[h;p[i]+.z.s[0b;k-1;i+1];.z.s[1b;k;i+1]-p i];
+   :cache[(h;k;i)]:donothing|dosomething]]}
 </pre></div>
 
      </div>
@@ -15626,18 +15633,6 @@ f:{[h;k;i]
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain">
 <pre>::
 ::
-0b 0 0 | 0
-0b 0 1 | 0
-0b 0 2 | 0
-0b 0 3 | 0
-0b 0 4 | 0
-0b 0 5 | 0
-0b 0 6 | 0
-0b 0 7 | 0
-0b 0 8 | 0
-0b 0 9 | 0
-0b 0 10| 0
-0b 0 11| 0
 </pre>
 </div>
 </div>
@@ -15646,7 +15641,7 @@ f:{[h;k;i]
 
 </div>
 
-</div></section><section >
+</div><div class="fragment" >
 <div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
 <div class="jp-Cell-inputWrapper">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
@@ -15658,7 +15653,7 @@ f:{[h;k;i]
 </div>
 </div>
 </div>
-</div><div class="fragment" ><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
+</div></div><div class="fragment" ><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
 <div class="jp-Cell-inputWrapper">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -15672,7 +15667,7 @@ f[0b;1;0] /11 the original problem
 f[0b;2;0] /15 buy at 1, sell at 9, buy at 5 sell at 12
 f[0b;3;0] /??
 f[0b;4;0] /??
-f[0b;5;0] /??
+f[0b;5;0] /??  
 </pre></div>
 
      </div>
@@ -15713,18 +15708,77 @@ f[0b;5;0] /??
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<h4 id="Can-we-do-better?">Can we do better?<a class="anchor-link" href="#Can-we-do-better?">&#182;</a></h4><p>However, we know that a vector solution is possible for k=1,2,infinity,</p>
 <ul>
-<li><p>We might hope there is a vector solution for when k is 3 and above.</p>
+<li>Let’s reorganize the recursive solution so it is addressing the prefixes:</li>
+<li>again assume we are at a particular state<ul>
+<li>(i)ndex in our price series, representing prices up to i</li>
+<li>k transactions left</li>
+<li>(s)old if we sold a share</li>
+</ul>
 </li>
-<li><p>We can analyze the intermediate results of the cache to get some sense of this.</p>
+<li>Let’s start with the base cases:<ul>
+<li>If k equals 0<ul>
+<li>return 0</li>
+</ul>
+</li>
+<li>If i is 0 i.e. we are the front of the list:<ul>
+<li>if (s)old a share we must buy it back:<ul>
+<li>return negative of the first price</li>
+</ul>
+</li>
+<li>else:<ul>
+<li>return 0</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
 </li>
 </ul>
 
 </div>
 </div>
 </div>
-</div><div class="fragment" ><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
+</div></section><section >
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<ul>
+<li>Otherwise the solution to the problem is simply the maximum of 2 options:<ul>
+<li>do nothing at this step:<ul>
+<li>0+the function decrement i</li>
+</ul>
+</li>
+<li>do something:<ul>
+<li>If we (s)old a share we must buy<ul>
+<li>subtract (costs money to buy) the current price from the result of:<ul>
+<li>function with decrement k and decrement i</li>
+</ul>
+</li>
+<li>we have no longer (s)old a share</li>
+</ul>
+</li>
+<li>Otherwise we have not (s)old a share<ul>
+<li>add current price to the result of:<ul>
+<li>this function with i decremented</li>
+</ul>
+</li>
+<li>we (s)old a share</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+</div>
+</div>
+</div>
+</div></section><section ><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
 <div class="jp-Cell-inputWrapper">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -15733,8 +15787,20 @@ f[0b;5;0] /??
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
      <div class="CodeMirror cm-s-jupyter">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="o">%%</span><span class="k">q</span>
-t:(flip `h`k`j!flip key cache)!([]v:value cache);
-exec (`$string[asc j])!v by k from t where not h 
+cache:(0b,&#39;0,&#39;til[count p])!count[p]#0;
+f:{[s;k;i]
+   $[k=0;0;
+     i=0;s*neg p 0;
+    (s;k;i) in key cache;cache[(s;k;i)];
+  [donothing:.z.s[s;k;i-1];
+  dosomething:$[s;.z.s[0b;k-1;i-1]-p i;.z.s[1b;k;i-1]+p i];
+  :cache[(s;k;i)]:donothing|dosomething]]}
+f[0b;0;-1+count p] /0 no surprise with 0 transaction no profit is possible
+f[0b;1;-1+count p] /11 the original problem
+f[0b;2;-1+count p] /15 buy at 1, sell at 9, buy at 5 sell at 12
+f[0b;3;-1+count p] /??
+f[0b;4;-1+count p] /??
+f[0b;5;-1+count p] /??  
 </pre></div>
 
      </div>
@@ -15755,14 +15821,129 @@ exec (`$string[asc j])!v by k from t where not h
 
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain">
 <pre>::
- | 0 1 2 3 4 5  6  7  8  9  10 11
--| ------------------------------
-0| 0 0 0 0 0 0  0  0  0  0  0  0 
-1| 0 2 2 7 7 8  10 10 11 11 11 11
-2| 0 2 2 9 9 12 14 14 15 15 15 15
-3| 0 2 2 9 9 14 16 16 17 17 18 18
-4| 0 2 2 9 9 14 16 16 18 18 20 20
-5| 0 2 2 9 9 14 16 16 18 18 21 21
+::
+0
+11
+15
+18
+20
+21
+</pre>
+</div>
+</div>
+
+</div>
+
+</div>
+
+</div></section><section >
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<h4 id="Can-we-do-better?">Can we do better?<a class="anchor-link" href="#Can-we-do-better?">&#182;</a></h4><p>However, we know that a vector solution is possible for k=1,2,infinity,</p>
+<ul>
+<li><p>We might hope there is a vector solution for when k is 3 and above.</p>
+</li>
+<li><p>We can analyze the intermediate results of the prefixes cache to get some sense of this.</p>
+</li>
+</ul>
+
+</div>
+</div>
+</div>
+</div><div class="fragment" ><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[13]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+     <div class="CodeMirror cm-s-jupyter">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="o">%%</span><span class="k">q</span>
+cache_t:(flip `h`k`j!flip key cache)!([]v:value cache);
+(enlist[`p]!enlist (`$string til count p)!p),
+ exec (`$string[til count p])!(0,v) til count p by `$string k from cache_t where not h
+</pre></div>
+
+     </div>
+</div>
+</div>
+</div>
+
+<div class="jp-Cell-outputWrapper">
+<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
+</div>
+
+
+<div class="jp-OutputArea jp-Cell-outputArea">
+<div class="jp-OutputArea-child">
+    
+    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+
+
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain">
+<pre>::
+ | 0 1 2 3 4 5 6 7  8  9  10 11
+-| ----------------------------
+p| 3 2 5 1 3 2 4 9  5  12 3  5 
+0| 0 0 0 0 0 0 0 0  0  0  0  0 
+1| 0 0 3 3 3 3 3 8  8  11 11 11
+2| 0 0 3 3 5 5 6 11 11 15 15 15
+3| 0 0 3 3 5 5 7 12 12 18 18 18
+4| 0 0 3 3 5 5 7 12 12 19 19 20
+5| 0 0 3 3 5 5 7 12 12 19 19 21
+</pre>
+</div>
+</div>
+
+</div>
+
+</div>
+
+</div></div></section><section ><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[14]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+     <div class="CodeMirror cm-s-jupyter">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="o">%%</span><span class="k">q</span>
+cache_t:(flip `h`k`j!flip key cache)!([]v:value cache);
+(enlist[`p]!enlist (`$string til count p)!p),
+ exec (`$string[til count p])!(0,v) til count p by `$string k from cache_t where not h
+</pre></div>
+
+     </div>
+</div>
+</div>
+</div>
+
+<div class="jp-Cell-outputWrapper">
+<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
+</div>
+
+
+<div class="jp-OutputArea jp-Cell-outputArea">
+<div class="jp-OutputArea-child">
+    
+    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+
+
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain">
+<pre>::
+ | 0 1 2 3 4 5 6 7  8  9  10 11
+-| ----------------------------
+p| 3 2 5 1 3 2 4 9  5  12 3  5 
+0| 0 0 0 0 0 0 0 0  0  0  0  0 
+1| 0 0 3 3 3 3 3 8  8  11 11 11
+2| 0 0 3 3 5 5 6 11 11 15 15 15
+3| 0 0 3 3 5 5 7 12 12 18 18 18
+4| 0 0 3 3 5 5 7 12 12 19 19 20
+5| 0 0 3 3 5 5 7 12 12 19 19 21
 </pre>
 </div>
 </div>
@@ -15787,54 +15968,7 @@ In other words, each row allows you to spend money from the previous row and sel
 </div>
 </div>
 </div>
-</aside></div></section><section ><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
-<div class="jp-Cell-inputWrapper">
-<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
-</div>
-<div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[13]:</div>
-<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
-     <div class="CodeMirror cm-s-jupyter">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="o">%%</span><span class="k">q</span>
-t:(flip `h`k`j!flip key cache)!([]v:value cache);
-exec (`$string[asc j])!v by k from t where not h 
-</pre></div>
-
-     </div>
-</div>
-</div>
-</div>
-
-<div class="jp-Cell-outputWrapper">
-<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
-</div>
-
-
-<div class="jp-OutputArea jp-Cell-outputArea">
-<div class="jp-OutputArea-child">
-    
-    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-
-
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain">
-<pre>::
- | 0 1 2 3 4 5  6  7  8  9  10 11
--| ------------------------------
-0| 0 0 0 0 0 0  0  0  0  0  0  0 
-1| 0 2 2 7 7 8  10 10 11 11 11 11
-2| 0 2 2 9 9 12 14 14 15 15 15 15
-3| 0 2 2 9 9 14 16 16 17 17 18 18
-4| 0 2 2 9 9 14 16 16 18 18 20 20
-5| 0 2 2 9 9 14 16 16 18 18 21 21
-</pre>
-</div>
-</div>
-
-</div>
-
-</div>
-
-</div><div class="fragment" >
+</aside><div class="fragment" >
 <div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
 <div class="jp-Cell-inputWrapper">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
@@ -15863,7 +15997,7 @@ exec (`$string[asc j])!v by k from t where not h
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[31]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[15]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
      <div class="CodeMirror cm-s-jupyter">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="o">%%</span><span class="k">q</span>
@@ -15874,6 +16008,7 @@ maxprofitk[2;p]
 maxprofitk[3;p]
 maxprofitk[4;p]
 maxprofitk[5;p]
+`px`0`1`2`3`4`5!(enlist[p],{[k;p]{[p;c] maxs p+maxs c-p}[p]\[k;p*0]}[5;p])
 </pre></div>
 
      </div>
@@ -15900,6 +16035,13 @@ maxprofitk[5;p]
 18
 20
 21
+px| 3 2 5 1 3 2 4 9  5  12 3  5 
+0 | 0 0 0 0 0 0 0 0  0  0  0  0 
+1 | 0 0 3 3 3 3 3 8  8  11 11 11
+2 | 0 0 3 3 5 5 6 11 11 15 15 15
+3 | 0 0 3 3 5 5 7 12 12 18 18 18
+4 | 0 0 3 3 5 5 7 12 12 19 19 20
+5 | 0 0 3 3 5 5 7 12 12 19 19 21
 </pre>
 </div>
 </div>
@@ -15916,8 +16058,10 @@ maxprofitk[5;p]
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
 <h3 id="Finally-if-we-take-a-closer-look-at-the-inner-function">Finally if we take a closer look at the inner function<a class="anchor-link" href="#Finally-if-we-take-a-closer-look-at-the-inner-function">&#182;</a></h3><p><code>{[p;c] maxs p +maxs c - p }[p]</code></p>
-<p>we might notice something funny: <code>maxs c - p</code> is the same as <code>mins p -</code></p>
+<p>we might notice something funny: <code>maxs c - p</code> is the same as <code>mins p - c</code></p>
+<p>since c will be passed in</p>
 <p>we can omit the current state variable</p>
+<p><code>mins p -</code></p>
 
 </div>
 </div>
@@ -15938,13 +16082,13 @@ maxprofitk[5;p]
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[15]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[16]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
      <div class="CodeMirror cm-s-jupyter">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="o">%%</span><span class="k">q</span>
 k:3
 p:3 2 5 1 3 2 4 9 5 12 3 5
-P:maxs p- mins p- /General Max Profit expresion
+P:maxs p - mins p- /General Max Profit expresion
 /solutions 
 P 0 /1 transaction
 P P 0 /2 transactions
@@ -15985,7 +16129,50 @@ P/[0] /unlimited transactions
 
 </div>
 
-</div></div></section></section><section ><section >
+</div></div></section><section ><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[17]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+     <div class="CodeMirror cm-s-jupyter">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1">#we can solve versions in 5 chars</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">kx</span><span class="o">.</span><span class="n">q</span><span class="p">(</span><span class="s1">&#39;P\[0]&#39;</span><span class="p">))</span>
+</pre></div>
+
+     </div>
+</div>
+</div>
+</div>
+
+<div class="jp-Cell-outputWrapper">
+<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
+</div>
+
+
+<div class="jp-OutputArea jp-Cell-outputArea">
+<div class="jp-OutputArea-child">
+    
+    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+
+
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain">
+<pre>0
+0 0 3 3 3 3 3 8 8 11 11 11
+0 0 3 3 5 5 6 11 11 15 15 15
+0 0 3 3 5 5 7 12 12 18 18 18
+0 0 3 3 5 5 7 12 12 19 19 20
+0 0 3 3 5 5 7 12 12 19 19 21
+</pre>
+</div>
+</div>
+
+</div>
+
+</div>
+
+</div></section></section><section ><section >
 <div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
 <div class="jp-Cell-inputWrapper">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
@@ -16012,7 +16199,7 @@ P/[0] /unlimited transactions
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[16]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[18]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
      <div class="CodeMirror cm-s-jupyter">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="c1">#https://leetcode.com/problems/best-time-to-buy-and-sell-stock/solutions/1956412/python3-top-down-recursion-memoization/?languageTags=python3&amp;topicTags=recursion</span>
@@ -16046,7 +16233,7 @@ P/[0] /unlimited transactions
 <div class="jp-OutputArea jp-Cell-outputArea">
 <div class="jp-OutputArea-child jp-OutputArea-executeResult">
     
-    <div class="jp-OutputPrompt jp-OutputArea-prompt">Out[16]:</div>
+    <div class="jp-OutputPrompt jp-OutputArea-prompt">Out[18]:</div>
 
 
 
@@ -16066,7 +16253,62 @@ P/[0] /unlimited transactions
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[17]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[19]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+     <div class="CodeMirror cm-s-jupyter">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1">#prefixes top down version</span>
+<span class="k">def</span> <span class="nf">max_profit</span><span class="p">(</span><span class="n">prices</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span> <span class="n">k</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+    <span class="nd">@lru_cache</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">rec</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">h</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">k</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">return</span> <span class="mi">0</span>
+            <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">h</span><span class="o">*-</span><span class="n">prices</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">c1</span> <span class="o">=</span> <span class="n">rec</span><span class="p">(</span><span class="n">i</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">h</span><span class="p">)</span> <span class="c1"># we dont buy or sell</span>
+            <span class="n">c2</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="k">if</span> <span class="n">h</span><span class="p">:</span>
+                <span class="n">c2</span> <span class="o">=</span> <span class="n">rec</span><span class="p">(</span><span class="n">i</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">k</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-</span> <span class="n">prices</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>  <span class="c1"># we buy</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">c2</span> <span class="o">=</span> <span class="n">rec</span><span class="p">(</span><span class="n">i</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span> <span class="o">+</span> <span class="n">prices</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>  <span class="c1"># we sell</span>
+            <span class="k">return</span> <span class="nb">max</span><span class="p">(</span><span class="n">c1</span><span class="p">,</span> <span class="n">c2</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">rec</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">prices</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>  <span class="c1"># k == 1, means, can do only 1 transaction</span>
+<span class="n">max_profit</span><span class="p">(</span><span class="n">prices</span><span class="p">,</span><span class="mi">6</span><span class="p">)</span>
+</pre></div>
+
+     </div>
+</div>
+</div>
+</div>
+
+<div class="jp-Cell-outputWrapper">
+<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
+</div>
+
+
+<div class="jp-OutputArea jp-Cell-outputArea">
+<div class="jp-OutputArea-child jp-OutputArea-executeResult">
+    
+    <div class="jp-OutputPrompt jp-OutputArea-prompt">Out[19]:</div>
+
+
+
+
+<div class="jp-RenderedText jp-OutputArea-output jp-OutputArea-executeResult" data-mime-type="text/plain">
+<pre>21</pre>
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</div></section><section ><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[20]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
      <div class="CodeMirror cm-s-jupyter">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="o">%%</span><span class="k">q</span>
@@ -16118,7 +16360,77 @@ maxProfit 3 2 5 1 3 2 4 9 5 12 3 5
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[18]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[21]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+     <div class="CodeMirror cm-s-jupyter">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="o">%%</span><span class="k">q</span>
+cache:(0b,&#39;0,&#39;til[count p])!count[p]#0;
+f:{[h;k;i]
+   $[i=count p;0;
+     (h;k;i) in key cache;cache[(h;k;i)];
+  [donothing:.z.s[h;k;i+1];
+  dosomething:$[h;p[i]+.z.s[0b;k-1;i+1];.z.s[1b;k;i+1]-p i];
+  :cache[(h;k;i)]:donothing|dosomething]]};
+f[0b;0;0] /0 no surprise with 0 transaction no profit is possible
+f[0b;1;0] /11 the original problem
+f[0b;2;0] /15 buy at 1, sell at 9, buy at 5 sell at 12
+f[0b;3;0] /??
+f[0b;4;0] /??
+f[0b;5;0] /??  
+p
+t:(flip `h`k`j!flip key cache)!([]v:value cache);
+exec (`$string[asc j])!reverse v by k from t where not h 
+</pre></div>
+
+     </div>
+</div>
+</div>
+</div>
+
+<div class="jp-Cell-outputWrapper">
+<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
+</div>
+
+
+<div class="jp-OutputArea jp-Cell-outputArea">
+<div class="jp-OutputArea-child">
+    
+    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+
+
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain">
+<pre>::
+::
+0
+11
+15
+18
+20
+21
+3 2 5 1 3 2 4 9 5 12 3 5
+::
+ | 0  1  2  3  4  5  6  7 8 9 10 11
+-| --------------------------------
+0| 0  0  0  0  0  0  0  0 0 0 0  0 
+1| 11 11 11 11 10 10 8  7 7 2 2  0 
+2| 15 15 15 15 14 14 12 9 9 2 2  0 
+3| 18 18 17 17 16 16 14 9 9 2 2  0 
+4| 20 20 18 18 16 16 14 9 9 2 2  0 
+5| 21 21 18 18 16 16 14 9 9 2 2  0 
+</pre>
+</div>
+</div>
+
+</div>
+
+</div>
+
+</div></section><section ><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[22]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
      <div class="CodeMirror cm-s-jupyter">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="c1">#or from python calling q</span>
@@ -16139,7 +16451,7 @@ maxProfit 3 2 5 1 3 2 4 9 5 12 3 5
 <div class="jp-OutputArea jp-Cell-outputArea">
 <div class="jp-OutputArea-child jp-OutputArea-executeResult">
     
-    <div class="jp-OutputPrompt jp-OutputArea-prompt">Out[18]:</div>
+    <div class="jp-OutputPrompt jp-OutputArea-prompt">Out[22]:</div>
 
 
 
